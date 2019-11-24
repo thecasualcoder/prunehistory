@@ -1,6 +1,18 @@
 sudo: required
 services:
   - docker
-before_install:
-  - docker pull dineshba/nim-osx
-  - docker run -v "$(pwd):/project" -w /project dineshba/nim-osx nim -d:release --os:macosx --cpu:amd64 c prunehistory.nim
+before_deploy:
+- docker pull dineshba/nim-osx
+- docker run -v "$(pwd):/project" -w /project dineshba/nim-osx nim -d:release --os:macosx --cpu:amd64 c prunehistory.nim
+- PREVIOUS_TAG=$(git tag | tail -2 | head -1)
+- echo 'Changelog:'
+- git log ${PREVIOUS_TAG}..${TRAVIS_TAG} --oneline
+deploy:
+  - provider: releases
+    api_key:
+      secure: bYV0M05yNa9+mIKJUcruPE1uLVkXVIDOce/Aid7kHI/U8mokgXEa/aSnZvX0nlDfUCAUKYt8Idp+eojvGkt3zXDg8OC+K0EvcxMgLBx2NDW+gx/eaPbNmGkYf0pFR32crpBcdfkAdWChtdwVifiZmehavSoz7hij+I5jAowaAN4iuvZyJ8tOw/TQf8oGTA7nBW1FEtnrcqU14rXzs3aGDlU2j8F6kR++P83uwEf8Fzagi6Y66RhjKcD25j6PZI16hKqJeVh6qt9ugD3pDn0V/rTxs15uy5ISlvtadvp/GwiQOrAsiZ7q7sb0EfPbnqBxZCXeqTzFaNtvLLeUHXBbz2vnMk5IBPGdUraLqrtlhJRQUJcNkkdDYd5n1yeof2/x1SRyZqiekbG6v3bYaXxpTWIuOnovyqyNwngGkv5DdzbWwS1xhzCufryeQqDMNjacLeUMAyyxXUHIWHYfwgV31b4O0FyfLr0IIL8duxMsPY2hdzPjooNZ6kOs+x9D9XEaNlxiHtPyjhnOqWAQ590t8gFz0nqseJTV19tkkous37JfmjEwzaLOsbG5neamZKKtQJ62VCKSSTnEB0M152F833gb28G/gARV/40hN50TMGodT35KTZmGUDsAFBhkyd9jqlR/1RJbDZgaOe+YdEmb/IxHh0sSEwA3uqOidZQwmak=
+    file: "prunehistory"
+    skip_cleanup: true
+    on:
+      tags: true
+      repo: thecasualcoder/prunehistory
