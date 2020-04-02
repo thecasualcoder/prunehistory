@@ -8,6 +8,7 @@ proc pruneHistory() =
 
     var historyMap = initTable[string, bool]()
     let count = len(lines)
+    writeLine(stderr, &"Number of lines before optimizing: {count}")
     var result = newSeq[string]()
     for i in countup(1, count):
       let command = lines[count - i]
@@ -20,6 +21,7 @@ proc pruneHistory() =
     defer: f.close()
 
     let resultCount = len(result)
+    writeLine(stderr, &"Number of lines after optimizing: {resultCount}")
     for i in countup(1, resultCount):
       f.writeLine(result[resultCount - i ])
 
