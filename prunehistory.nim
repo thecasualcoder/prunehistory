@@ -14,7 +14,9 @@ proc pruneHistory() =
       if not historyMap.hasKey(command):
         historyMap[command] = true
         result.add(command)
-    let f = open(&"{home}/.bash_history.pruned", fmWrite)
+    copyFile(&"{home}/.bash_history", &"{home}/.bash_history.bak")
+    removeFile(&"{home}/.bash_history")
+    let f = open(&"{home}/.bash_history", fmWrite)
     defer: f.close()
 
     let resultCount = len(result)
